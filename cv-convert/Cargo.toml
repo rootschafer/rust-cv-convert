@@ -4,6 +4,7 @@ description = 'Type conversions among famous Rust computer vision libraries'
 version = '0.25.0'
 authors = ['jerry73204 <jerry73204@gmail.com>']
 edition = '2021'
+# edition = '2024'
 documentation = 'https://docs.rs/cv-convert/'
 repository = 'https://github.com/Rottschaferanders/rust-cv-convert.git'
 homepage = 'https://github.com/Rottschaferanders/rust-cv-convert/'
