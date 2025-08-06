@@ -166,7 +166,7 @@ where
 
     fn try_to_cv(&self) -> Result<core_cv::Mat> {
         let core_cv::Point_ { x, y, .. } = *self;
-        let mat = core_cv::Mat::from_slice(&[x, y])?;
+        let mat = core_cv::Mat::from_slice(&[x, y])?.try_clone()?;
         Ok(mat)
     }
 }
@@ -179,7 +179,7 @@ where
 
     fn try_to_cv(&self) -> Result<core_cv::Mat> {
         let core_cv::Point3_ { x, y, z, .. } = *self;
-        let mat = core_cv::Mat::from_slice(&[x, y, z])?;
+        let mat = core_cv::Mat::from_slice(&[x, y, z])?.try_clone()?;
         Ok(mat)
     }
 }

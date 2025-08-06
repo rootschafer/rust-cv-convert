@@ -20,7 +20,8 @@ impl TryToCv<geo::Isometry3<f64>> for OpenCvPose<&core_cv::Point3d> {
         let rotation = {
             let rvec_mat = {
                 let core_cv::Point3_ { x, y, z, .. } = *rvec;
-                core_cv::Mat::from_slice(&[x, y, z])?
+                let slice = [x, y, z];
+                core_cv::Mat::from_slice(&slice)?.try_clone()?
             };
             let mut rotation_mat = core_cv::Mat::zeros(3, 3, core_cv::CV_64FC1)?.to_mat()?;
             calib3d::rodrigues(&rvec_mat, &mut rotation_mat, &mut core_cv::Mat::default())?;
@@ -121,7 +122,7 @@ impl TryToCv<OpenCvPose<core_cv::Mat>> for geo::Isometry3<f64> {
             calib3d::rodrigues(&rotation_mat, &mut rvec_mat, &mut core_cv::Mat::default())?;
             rvec_mat
         };
-        let tvec = core_cv::Mat::from_slice(&[translation.x, translation.y, translation.z])?;
+        let tvec = core_cv::Mat::from_slice(&[translation.x, translation.y, translation.z])?.try_clone()?;
 
         Ok(OpenCvPose { rvec, tvec })
     }
@@ -203,7 +204,7 @@ where
     fn try_to_cv(&self) -> Result<core_cv::Mat, Self::Error> {
         let nrows = self.nrows();
         let mat =
-            core_cv::Mat::from_slice(self.transpose().as_slice())?.reshape(1, nrows as i32)?;
+            core_cv::Mat::from_slice(self.transpose().as_slice())?.reshape(1, nrows as i32)?.try_clone()?;
         Ok(mat)
     }
 }

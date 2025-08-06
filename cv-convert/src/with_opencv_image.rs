@@ -18,16 +18,18 @@ where
     fn try_to_cv(&self) -> Result<cv::Mat, Self::Error> {
         let (width, height) = self.dimensions();
         let cv_type = cv::CV_MAKETYPE(P::Subpixel::DEPTH, P::CHANNEL_COUNT as i32);
-        let mat = unsafe {
-            cv::Mat::new_rows_cols_with_data(
-                height as i32,
-                width as i32,
-                cv_type,
-                self.as_ptr() as *mut _,
-                cv::Mat_AUTO_STEP,
-            )?
-            .try_clone()?
-        };
+        // Create empty Mat and copy data
+        let mut mat = cv::Mat::zeros(height as i32, width as i32, cv_type)?.to_mat()?;
+        unsafe {
+            let mat_data_ptr = mat.data_mut();
+            let img_data = self.as_raw();
+            let total_bytes = (width as usize * height as usize * P::CHANNEL_COUNT as usize) * std::mem::size_of::<P::Subpixel>();
+            std::ptr::copy_nonoverlapping(
+                img_data.as_ptr() as *const u8,
+                mat_data_ptr,
+                total_bytes
+            );
+        }
         Ok(mat)
     }
 }
