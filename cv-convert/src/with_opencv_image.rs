@@ -1,10 +1,12 @@
-use crate::image;
-use crate::opencv::{core as cv, prelude::*};
-use crate::with_opencv::MatExt;
-use crate::{OpenCvElement, TryToCv};
+use crate::{
+    image,
+    opencv::{core as cv, prelude::*},
+    with_opencv::MatExt,
+    OpenCvElement, TryToCv,
+};
 use anyhow::{bail, ensure, Error, Result};
-use std::ops::Deref;
 use cv::DataType;
+use std::ops::Deref;
 
 // &ImageBuffer -> Mat
 impl<P, Container> TryToCv<cv::Mat> for image::ImageBuffer<P, Container>
@@ -23,11 +25,12 @@ where
         unsafe {
             let mat_data_ptr = mat.data_mut();
             let img_data = self.as_raw();
-            let total_bytes = (width as usize * height as usize * P::CHANNEL_COUNT as usize) * std::mem::size_of::<P::Subpixel>();
+            let total_bytes = (width as usize * height as usize * P::CHANNEL_COUNT as usize)
+                * std::mem::size_of::<P::Subpixel>();
             std::ptr::copy_nonoverlapping(
                 img_data.as_ptr() as *const u8,
                 mat_data_ptr,
-                total_bytes
+                total_bytes,
             );
         }
         Ok(mat)
@@ -195,10 +198,12 @@ where
 
 #[cfg(test)]
 mod tests {
-    use crate::image;
-    use crate::opencv::{core as cv, prelude::*};
-    use crate::with_opencv::MatExt;
-    use crate::TryToCv;
+    use crate::{
+        image,
+        opencv::{core as cv, prelude::*},
+        with_opencv::MatExt,
+        TryToCv,
+    };
     use anyhow::{ensure, Result};
     use itertools::iproduct;
 

@@ -49,12 +49,14 @@ macro_rules! impl_from_array {
 
     ($elem:ty, 2) => {
         // Borrowed tensor to borrowed array
-        impl<'a, const N1: usize, const N2: usize> TryAsRefCv<'a, TensorAsArray<'a, [[$elem; N2]; N1]>>
-            for tch::Tensor
+        impl<'a, const N1: usize, const N2: usize>
+            TryAsRefCv<'a, TensorAsArray<'a, [[$elem; N2]; N1]>> for tch::Tensor
         {
             type Error = Error;
 
-            fn try_as_ref_cv(&'a self) -> Result<TensorAsArray<'a, [[$elem; N2]; N1]>, Self::Error> {
+            fn try_as_ref_cv(
+                &'a self,
+            ) -> Result<TensorAsArray<'a, [[$elem; N2]; N1]>, Self::Error> {
                 ensure!(self.device() == tch::Device::Cpu);
                 ensure!(self.kind() == <$elem as tch::kind::Element>::KIND);
                 ensure!(self.size() == &[N1 as i64, N2 as i64]);
@@ -98,7 +100,9 @@ macro_rules! impl_from_array {
         {
             type Error = Error;
 
-            fn try_as_ref_cv(&'a self) -> Result<TensorAsArray<'a, [[[$elem; N3]; N2]; N1]>, Self::Error> {
+            fn try_as_ref_cv(
+                &'a self,
+            ) -> Result<TensorAsArray<'a, [[[$elem; N3]; N2]; N1]>, Self::Error> {
                 ensure!(self.device() == tch::Device::Cpu);
                 ensure!(self.kind() == <$elem as tch::kind::Element>::KIND);
                 ensure!(self.size() == &[N1 as i64, N2 as i64, N3 as i64]);
@@ -146,7 +150,9 @@ macro_rules! impl_from_array {
         {
             type Error = Error;
 
-            fn try_as_ref_cv(&'a self) -> Result<TensorAsArray<'a, [[[[$elem; N4]; N3]; N2]; N1]>, Self::Error> {
+            fn try_as_ref_cv(
+                &'a self,
+            ) -> Result<TensorAsArray<'a, [[[[$elem; N4]; N3]; N2]; N1]>, Self::Error> {
                 ensure!(self.device() == tch::Device::Cpu);
                 ensure!(self.kind() == <$elem as tch::kind::Element>::KIND);
                 ensure!(self.size() == &[N1 as i64, N2 as i64, N3 as i64, N4 as i64]);
@@ -179,8 +185,8 @@ macro_rules! impl_from_array {
         }
 
         // Borrowed array to tensor
-        impl<const N1: usize, const N2: usize, const N3: usize, const N4: usize>
-            ToCv<tch::Tensor> for [[[[$elem; N4]; N3]; N2]; N1]
+        impl<const N1: usize, const N2: usize, const N3: usize, const N4: usize> ToCv<tch::Tensor>
+            for [[[[$elem; N4]; N3]; N2]; N1]
         {
             fn to_cv(&self) -> tch::Tensor {
                 tch::Tensor::from_slice(self.flat().flat().flat())
@@ -198,11 +204,14 @@ macro_rules! impl_from_array {
                 const N3: usize,
                 const N4: usize,
                 const N5: usize,
-            > TryAsRefCv<'a, TensorAsArray<'a, [[[[[$elem; N5]; N4]; N3]; N2]; N1]>> for tch::Tensor
+            > TryAsRefCv<'a, TensorAsArray<'a, [[[[[$elem; N5]; N4]; N3]; N2]; N1]>>
+            for tch::Tensor
         {
             type Error = Error;
 
-            fn try_as_ref_cv(&'a self) -> Result<TensorAsArray<'a, [[[[[$elem; N5]; N4]; N3]; N2]; N1]>, Self::Error> {
+            fn try_as_ref_cv(
+                &'a self,
+            ) -> Result<TensorAsArray<'a, [[[[[$elem; N5]; N4]; N3]; N2]; N1]>, Self::Error> {
                 ensure!(self.device() == tch::Device::Cpu);
                 ensure!(self.kind() == <$elem as tch::kind::Element>::KIND);
                 ensure!(self.size() == &[N1 as i64, N2 as i64, N3 as i64, N4 as i64, N5 as i64]);
@@ -268,11 +277,15 @@ macro_rules! impl_from_array {
                 const N4: usize,
                 const N5: usize,
                 const N6: usize,
-            > TryAsRefCv<'a, TensorAsArray<'a, [[[[[[$elem; N6]; N5]; N4]; N3]; N2]; N1]>> for tch::Tensor
+            > TryAsRefCv<'a, TensorAsArray<'a, [[[[[[$elem; N6]; N5]; N4]; N3]; N2]; N1]>>
+            for tch::Tensor
         {
             type Error = Error;
 
-            fn try_as_ref_cv(&'a self) -> Result<TensorAsArray<'a, [[[[[[$elem; N6]; N5]; N4]; N3]; N2]; N1]>, Self::Error> {
+            fn try_as_ref_cv(
+                &'a self,
+            ) -> Result<TensorAsArray<'a, [[[[[[$elem; N6]; N5]; N4]; N3]; N2]; N1]>, Self::Error>
+            {
                 ensure!(self.device() == tch::Device::Cpu);
                 ensure!(self.kind() == <$elem as tch::kind::Element>::KIND);
                 ensure!(
@@ -485,7 +498,7 @@ mod tensors {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{TryAsRefCv, TryToCv, ToCv};
+    use crate::{ToCv, TryAsRefCv, TryToCv};
     use rand::prelude::*;
 
     #[test]

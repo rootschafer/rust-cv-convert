@@ -1,8 +1,8 @@
 use crate::{TchTensorAsImage, TchTensorImageShape, TryAsRefCv, TryToCv};
 use anyhow::{bail, ensure, Error, Result};
 use opencv::{core as cv, prelude::*};
-use std::borrow::Cow;
 use std::{
+    borrow::Cow,
     mem::ManuallyDrop,
     ops::{Deref, DerefMut},
     slice,

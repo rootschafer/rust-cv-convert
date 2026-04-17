@@ -1,6 +1,7 @@
-use crate::with_opencv::MatExt as _;
-use crate::with_opencv::OpenCvElement;
-use crate::{TryAsRefCv, TryToCv};
+use crate::{
+    with_opencv::{MatExt as _, OpenCvElement},
+    TryAsRefCv, TryToCv,
+};
 use anyhow::{Error, Result};
 use ndarray as nd;
 use opencv::{core as cv, prelude::*};
@@ -65,8 +66,7 @@ mod tests {
 
     use super::*;
     use anyhow::ensure;
-    use itertools::chain;
-    use itertools::Itertools as _;
+    use itertools::{chain, Itertools as _};
     use rand::prelude::*;
 
     #[test]
