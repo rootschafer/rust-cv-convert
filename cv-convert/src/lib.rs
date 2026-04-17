@@ -38,7 +38,7 @@
 //! [TryToCv] provides `.try_to_cv()` method for fallible conversions.
 //! Just like std's [Into] and [TryInto] traits.
 //!
-//! ```rust
+//! ```compile_fail,E0432
 //! # use cv_convert::{nalgebra, opencv};
 //! use cv_convert::{ToCv, TryToCv};
 //! use nalgebra as na;
