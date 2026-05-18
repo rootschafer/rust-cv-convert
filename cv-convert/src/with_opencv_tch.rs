@@ -231,18 +231,18 @@ impl TryToCv<cv::Mat> for TchTensorAsImage {
         let tensor = tensor.f_contiguous()?.f_to_device(tch::Device::Cpu)?;
         let depth = tch_kind_to_opencv_depth(tensor.f_kind()?)?;
         let typ = cv::CV_MAKE_TYPE(depth, channels as i32);
-
-        let mat = unsafe {
-            cv::Mat::new_rows_cols_with_data(
-                rows as i32,
-                cols as i32,
-                typ,
-                tensor.data_ptr(),
-                /* step = */
-                cv::Mat_AUTO_STEP,
-            )?
-            .try_clone()?
-        };
+        // Create empty Mat and copy data
+        let mut mat = cv::Mat::zeros(rows as i32, cols as i32, typ)?.to_mat()?;
+        let mat_data_ptr = mat.data_mut();
+        let tensor_data_ptr = tensor.data_ptr();
+        let total_bytes = mat.total() * mat.elem_size()?;
+        unsafe {
+            std::ptr::copy_nonoverlapping(
+                tensor_data_ptr as *const u8,
+                mat_data_ptr,
+                total_bytes
+            );
+        }
 
         Ok(mat)
     }
@@ -256,7 +256,18 @@ impl TryToCv<cv::Mat> for tch::Tensor {
         let size: Vec<_> = tensor.size().into_iter().map(|dim| dim as i32).collect();
         let depth = tch_kind_to_opencv_depth(tensor.f_kind()?)?;
         let typ = cv::CV_MAKETYPE(depth, 1);
-        let mat = unsafe { cv::Mat::new_nd_with_data(&size, typ, tensor.data_ptr(), None)? };
+        // Create empty Mat and copy data
+        let mut mat = cv::Mat::zeros_nd(&size, typ)?.to_mat()?;
+        let mat_data_ptr = mat.data_mut();
+        let tensor_data_ptr = tensor.data_ptr();
+        let total_bytes = mat.total() * mat.elem_size()?;
+        unsafe {
+            std::ptr::copy_nonoverlapping(
+                tensor_data_ptr as *const u8,
+                mat_data_ptr,
+                total_bytes
+            );
+        }
         Ok(mat)
     }
 }

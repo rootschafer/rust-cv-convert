@@ -55,7 +55,7 @@ where
         };
         let array = self.as_standard_layout();
         let slice = array.as_slice().unwrap();
-        let mat = cv::Mat::from_slice(slice)?.reshape_nd(*channels, shape)?;
+        let mat = cv::Mat::from_slice(slice)?.reshape_nd(*channels, shape)?.try_clone()?;
         Ok(mat)
     }
 }
